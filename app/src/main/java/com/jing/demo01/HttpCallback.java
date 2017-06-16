@@ -28,10 +28,14 @@ public abstract class HttpCallback<Result> implements ICallBack {
 
     public abstract void onSuccess(Result result);
 
+    /**
+     * 利用反射获得类的信息
+     * @param object
+     * @return Class<?> 需要实现的Json解析类
+     */
     private Class<?> analysisClzzInfo(Object object) {
         Type genType = getClass().getGenericSuperclass();
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-
         return (Class<?>) params[0];
     }
 
