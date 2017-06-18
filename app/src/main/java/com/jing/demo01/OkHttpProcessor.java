@@ -1,9 +1,11 @@
 package com.jing.demo01;
 
+import android.os.Handler;
 import android.util.Log;
 
 import java.io.IOException;
 import java.util.Map;
+
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -22,8 +24,11 @@ public class OkHttpProcessor implements IHttpProcessor {
 
     private OkHttpClient mOkHttpClient;
 
+    private Handler myHandler;
+
     public OkHttpProcessor() {
         mOkHttpClient = new OkHttpClient();
+        myHandler = new Handler();
     }
 
     @Override
@@ -40,7 +45,7 @@ public class OkHttpProcessor implements IHttpProcessor {
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, final Response response) throws IOException {
                 if (response == null) {
                     Log.d(TAG, "onSuccess response== null");
                     return;
@@ -49,9 +54,22 @@ public class OkHttpProcessor implements IHttpProcessor {
                 if (response.isSuccessful()) {
                    final String result = response.body().string();
                     Log.d(TAG, "onSuccess result==" + result);
-                    callBack.onSuccess(result);
+                    myHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callBack.onSuccess(result);
+                        }
+                    });
+
                 } else {
-                    callBack.onFailed(response.message().toString());
+
+                    myHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callBack.onFailed(response.message().toString());
+                        }
+                    });
+
                 }
             }
         });
@@ -67,13 +85,20 @@ public class OkHttpProcessor implements IHttpProcessor {
                 .build();
         mOkHttpClient.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(Call call,final IOException e) {
                 Log.d(TAG, "onFailure e ==" + e);
-                callBack.onFailed(e.toString());
+                myHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callBack.onFailed(e.toString());
+
+                    }
+                });
+
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, final Response response) throws IOException {
                 if (response == null) {
                     Log.d(TAG, "onSuccess response== null");
                     return;
@@ -81,9 +106,23 @@ public class OkHttpProcessor implements IHttpProcessor {
                 Log.d(TAG, "onSuccess response==" + response.toString());
                 if (response.isSuccessful()) {
                     final String result = response.body().string();
-                    callBack.onSuccess(result);
+
+                    myHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callBack.onSuccess(result);
+
+                        }
+                    });
                 } else {
-                    callBack.onFailed(response.message().toString());
+                    myHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callBack.onFailed(response.message().toString());
+
+                        }
+                    });
+
                 }
             }
         });
