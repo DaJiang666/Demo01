@@ -34,18 +34,23 @@ public class VolleyProcessor implements IHttpProcessor{
 
     @Override
     public void get(String url, Map<String, Object> params, final ICallBack callBack) {
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+        new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "");
+                Log.d(TAG, "onSuccess response==" + response);
                 callBack.onSuccess(response);
             }
-        }, new Response.ErrorListener() {
+        },
+        new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, "");
+                String toString = "null";
+                if (error != null) {
+                    toString = error.toString();
+                }
+                Log.d(TAG, "onErrorResponse error ==" + toString);
                 callBack.onFailed(error.toString());
             }
         });
@@ -55,7 +60,28 @@ public class VolleyProcessor implements IHttpProcessor{
     }
 
     @Override
-    public void post(String url, Map<String, Object> params, ICallBack callBack) {
+    public void post(String url, Map<String, Object> params, final ICallBack callBack) {
 
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "onSuccess response==" + response);
+                callBack.onSuccess(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                String toString = "null";
+                if (error != null) {
+                    toString = error.toString();
+                }
+                Log.d(TAG, "onErrorResponse error ==" + toString);
+                callBack.onFailed(error.toString());
+            }
+        });
+
+        mQueue.add(stringRequest);
     }
 }
