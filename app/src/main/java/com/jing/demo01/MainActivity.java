@@ -3,6 +3,7 @@ package com.jing.demo01;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.jing.demo01.bean.RotateBean;
 
@@ -26,16 +27,20 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onSuccess(RotateBean rotateBean) {
-
+                        toast("请求成功");
                     }
 
                     @Override
                     public void onFailed(String string) {
-
+                        toast("请求失败");
                     }
                 });
             }
         });
         // 在测试
+    }
+
+    public void toast(String string){
+        Toast.makeText(this, string , Toast.LENGTH_SHORT).show();
     }
 }
